@@ -1,1 +1,79 @@
 # Your Solution
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog
+        image: s223506639.azurecr.io/book-catalog:1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://sit722_part3_i7wo_user:HO7F1jE4yrrQZV3N5nTz4ajhpkg9J5wR@dpg-crfrr7qj1k6c7397jah0-a.oregon-postgres.render.com/sit722_part3_i7wo"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 4001
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-management
+  template:
+    metadata:
+      labels:
+        app: inventory-management
+    spec:
+      containers: 
+      - name: inventory-management
+        image: s223506639.azurecr.io/inventory_management:1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://sit722_part3_i7wo_user:HO7F1jE4yrrQZV3N5nTz4ajhpkg9J5wR@dpg-crfrr7qj1k6c7397jah0-a.oregon-postgres.render.com/sit722_part3_i7wo"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-management
+spec:
+  selector:
+    app: inventory-management
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 4002
+ 
